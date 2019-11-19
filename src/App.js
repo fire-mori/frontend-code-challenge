@@ -8,15 +8,32 @@ import logo from './archipro_dev.webp';
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      data,
+      sortDirection: "desc",
+    };
+  }
 
+  toggleSortDirection() {
+    const newState = (this.state.sortDirection === "asc" ? "desc" : "asc");
+    this.setState({
+      sortDirection: newState,
+    });
+  }
   getTable() {
+    const headers = ["Name", "Email", "Phone"]
     return (
       <Table className="App-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Contact Number</th>
+            {headers.map((header, index) => (
+              // temporary solution - index
+              <th key={index} onClick={() => { this.sortBy(header); console.log(this.state.sortDirection) }}>
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -27,6 +44,7 @@ class App extends Component {
   }
 
   getRow() {
+    const data = this.state.data;
     return data.map(
       ({ _id, name, email, phone }) => (
         <tr key={_id}>
@@ -35,7 +53,27 @@ class App extends Component {
           <td>{phone}</td>
         </tr>
       )
-    )
+    );
+  }
+
+  compareBy(key) {
+    const sortDirection = this.state.sortDirection;
+    this.toggleSortDirection();
+    return function (a, b) {
+      if (sortDirection === "asc") {
+        return (a[key] > b[key]) ? 1 : -1;
+      }
+      if (sortDirection === "desc") {
+        return (a[key] < b[key]) ? -1 : 1;
+      }
+      return 0;
+    };
+  }
+
+  sortBy(key) {
+    let arrayCopy = [...this.state.data];
+    arrayCopy.sort(this.compareBy(key));
+    this.setState({ data: arrayCopy });
   }
 
   render() {
@@ -48,7 +86,7 @@ class App extends Component {
           <Container>
             <Row>
               <Col>
-              {this.getTable()}
+                {this.getTable()}
               </Col>
             </Row>
           </Container>
