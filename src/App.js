@@ -16,12 +16,6 @@ class App extends Component {
     };
   }
 
-  toggleSortDirection() {
-    const newState = (this.state.sortDirection === "asc" ? "desc" : "asc");
-    this.setState({
-      sortDirection: newState,
-    });
-  }
   getTable() {
     const headers = ["Name", "Email", "Phone"]
     return (
@@ -36,7 +30,7 @@ class App extends Component {
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody key={this.state.sortDirection}>
           {this.getRow()}
         </tbody>
       </Table>
@@ -56,24 +50,31 @@ class App extends Component {
     );
   }
 
-  compareBy(key) {
-    const sortDirection = this.state.sortDirection;
-    this.toggleSortDirection();
+  compareBy(key, sortDirection) {
+    console.log('compare', sortDirection);
     return function (a, b) {
       if (sortDirection === "asc") {
-        return (a[key] > b[key]) ? 1 : -1;
+        return (a[key] < b[key]) ? 1 : -1;
       }
       if (sortDirection === "desc") {
-        return (a[key] < b[key]) ? -1 : 1;
+        return (a[key] > b[key]) ? 1 : -1;
       }
-      return 0;
+      return 0
     };
   }
 
+
   sortBy(key) {
+
     let arrayCopy = [...this.state.data];
-    arrayCopy.sort(this.compareBy(key));
-    this.setState({ data: arrayCopy });
+    const sortDirection = (this.state.sortDirection === "asc" ? "desc" : "asc");
+    console.log('sort by', key);
+    arrayCopy.sort(this.compareBy(key, sortDirection));
+    console.log('first', arrayCopy[0]._id);
+    this.setState({
+      sortDirection,
+      data: arrayCopy,
+    });
   }
 
   render() {
