@@ -24,7 +24,7 @@ class App extends Component {
           <tr>
             {headers.map((header, index) => (
               // temporary solution - index
-              <th key={index} onClick={() => { this.sortBy(header); console.log(this.state.sortDirection) }}>
+              <th key={index} onClick={() => { this.sortBy(header); }}>
                 {header}
               </th>
             ))}
@@ -51,7 +51,6 @@ class App extends Component {
   }
 
   compareBy(key, sortDirection) {
-    console.log('compare', sortDirection);
     return function (a, b) {
       if (sortDirection === "asc") {
         return (a[key] < b[key]) ? 1 : -1;
@@ -68,9 +67,7 @@ class App extends Component {
 
     let arrayCopy = [...this.state.data];
     const sortDirection = (this.state.sortDirection === "asc" ? "desc" : "asc");
-    console.log('sort by', key);
     arrayCopy.sort(this.compareBy(key, sortDirection));
-    console.log('first', arrayCopy[0]._id);
     this.setState({
       sortDirection,
       data: arrayCopy,
